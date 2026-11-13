@@ -5,11 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fleeting Thoughts</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  @font-face {
+  font-family: 'Lora';
+  src: local('Lora'), url('Lora-Regular.ttf') format('truetype');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
 
     body {
       overflow: hidden;
@@ -58,9 +67,7 @@
       padding: 18px 28px;
       border-radius: 9999px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(20, 22, 28, 0.68);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(234, 237, 248, 0.68);
       color: #ffffff;
       font-size: 1.15rem;
       outline: none;
@@ -99,14 +106,14 @@
     // CUSTOMIZE YOUR PHYSICS & APPEARANCE HERE
     // ==========================================
     const CONFIG = {
-      lifespanSeconds: 30,     // How long before each thought vanishes
+      lifespanSeconds: 20,     // How long before each thought vanishes
       minSpeed: 1.0,           // Minimum launch speed
       maxSpeed: 2.2,           // Maximum launch speed
       gravity: 0,              // 0 = zero-g float, positive = sink, negative = rise
       bounciness: 1.0,         // 1.0 = elastic bounce off screen edges
-      repulsionStrength: 0.04, // Gentle push between thoughts so they don't overlap
-      fontSize: '26px',        // Size of floating text
-      fontFamily: 'sans-serif',
+      repulsionStrength: 0.001, // Gentle push between thoughts so they don't overlap
+      fontSize: '20px',        // Size of floating text
+      fontFamily: 'Lora',
       colors: [
         '#ffffff'
       ]
