@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleeting Thoughts</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: #0b0c10;
+      background-image:
+        radial-gradient(circle at center, rgba(11, 12, 16, 0.25) 0%, rgba(11, 12, 16, 0.65) 100%),
+        url('bomi.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .floating-item {
+      position: absolute;
+      font-weight: 600;
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85), 0 0 24px rgba(0, 0, 0, 0.6);
+      will-change: transform, opacity;
+    }
+
+    /* Central Modern Search-Style Input */
+    #center-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      width: 90%;
+      max-width: 540px;
+    }
+
+    #thoughtInput {
+      width: 100%;
+      padding: 18px 28px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(20, 22, 28, 0.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #ffffff;
+      font-size: 1.15rem;
+      outline: none;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    #thoughtInput::placeholder {
+      color: #b4b8c5;
+    }
+
+    #thoughtInput:focus {
+      background: rgba(24, 27, 34, 0.85);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 0 4px rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="stage"></div>
+
+  <form id="center-box">
+    <input
+      type="text"
+      id="thoughtInput"
+      placeholder="enter your thought here."
+      maxlength="60"
+      autocomplete="off"
+      autofocus
+    />
+  </form>
+
+  <script>
+    // ==========================================
+    // CUSTOMIZE YOUR PHYSICS & APPEARANCE HERE
+    // ==========================================
+    const CONFIG = {
+      lifespanSeconds: 30,     // How long before each thought vanishes
+      minSpeed: 1.0,           // Minimum launch speed
+      maxSpeed: 2.2,           // Maximum launch speed
+      gravity: 0,              // 0 = zero-g float, positive = sink, negative = rise
+      bounciness: 1.0,         // 1.0 = elastic bounce off screen edges
+      repulsionStrength: 0.04, // Gentle push between thoughts so they don't overlap
+      fontSize: '26px',        // Size of floating text
+      fontFamily: 'sans-serif',
+      colors: [
+        '#ffffff'
+      ]
+    };
+    // ==========================================
+
+    const stage = document.getElementById('stage');
+    const form = document.getElementById('center-box');
+    const input = document.getElementById('thoughtInput');
+    const items = [];
+    let spawnCount = 0;
+
+    function spawnThought(text) {
+      const el = document.createElement('div');
+      el.className = 'floating-item';
+      el.textContent = text;
+      el.style.fontSize = CONFIG.fontSize;
+      el.style.fontFamily = CONFIG.fontFamily;
+      el.style.color = CONFIG.colors[spawnCount % CONFIG.colors.length];
+
+      stage.appendChild(el);
+
+      const width = el.offsetWidth;
+      const height = el.offsetHeight;
+      const startX = (window.innerWidth - width) / 2;
+      const startY = (window.innerHeight - height) / 2;
+
+      const angle = spawnCount * 2.39996 + (Math.random() - 0.5) * 0.3;
+      const speed = CONFIG.minSpeed + Math.random() * (CONFIG.maxSpeed - CONFIG.minSpeed);
+      spawnCount++;
+
+      items.push({
+        el,
+        x: startX,
+        y: startY,
+        width,
+        height,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        createdAt: performance.now(),
+        lifespan: CONFIG.lifespanSeconds * 1000
+      });
+    }
+
+    function animate(now) {
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      if (CONFIG.repulsionStrength > 0) {
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i];
+            const b = items[j];
+
+            const centerAx = a.x + a.width / 2;
+            const centerAy = a.y + a.height / 2;
+            const centerBx = b.x + b.width / 2;
+            const centerBy = b.y + b.height / 2;
+
+            const dx = centerAx - centerBx;
+            const dy = centerAy - centerBy;
+            const minDistX = (a.width + b.width) / 2 + 12;
+            const minDistY = (a.height + b.height) / 2 + 12;
+
+            if (Math.abs(dx) < minDistX && Math.abs(dy) < minDistY) {
+              const pushX = (dx >= 0 ? 1 : -1) * CONFIG.repulsionStrength;
+              const pushY = (dy >= 0 ? 1 : -1) * CONFIG.repulsionStrength;
+              a.vx += pushX;
+              a.vy += pushY;
+              b.vx -= pushX;
+              b.vy -= pushY;
+            }
+          }
+        }
+      }
+
+      for (let i = items.length - 1; i >= 0; i--) {
+        const item = items[i];
+        const age = now - item.createdAt;
+        const progress = age / item.lifespan;
+
+        if (progress >= 1) {
+          item.el.remove();
+          items.splice(i, 1);
+          continue;
+        }
+
+        item.el.style.opacity = (1 - progress).toFixed(3);
+        item.vy += CONFIG.gravity;
+
+        const currentSpeed = Math.hypot(item.vx, item.vy);
+        if (currentSpeed > CONFIG.maxSpeed * 1.4) {
+          const scale = (CONFIG.maxSpeed * 1.4) / currentSpeed;
+          item.vx *= scale;
+          item.vy *= scale;
+        }
+
+        item.x += item.vx;
+        item.y += item.vy;
+
+        if (item.x <= 0) {
+          item.x = 0;
+          item.vx = Math.abs(item.vx) * CONFIG.bounciness;
+        } else if (item.x + item.width >= screenWidth) {
+          item.x = screenWidth - item.width;
+          item.vx = -Math.abs(item.vx) * CONFIG.bounciness;
+        }
+
+        if (item.y <= 0) {
+          item.y = 0;
+          item.vy = Math.abs(item.vy) * CONFIG.bounciness;
+        } else if (item.y + item.height >= screenHeight) {
+          item.y = screenHeight - item.height;
+          item.vy = -Math.abs(item.vy) * CONFIG.bounciness;
+        }
+
+        item.el.style.transform = `translate3d(${item.x}px, ${item.y}px, 0)`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (text) {
+        spawnThought(text);
+        input.value = '';
+      }
+    });
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
