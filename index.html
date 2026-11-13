@@ -97,7 +97,7 @@
       type="text"
       id="thoughtInput"
       placeholder="enter your thought here."
-      maxlength="60"
+      maxlength="150"
       autocomplete="off"
       autofocus
     />
@@ -108,9 +108,9 @@
     // CUSTOMIZE YOUR PHYSICS & APPEARANCE HERE
     // ==========================================
     const CONFIG = {
-      lifespanSeconds: 10,     // How long before each thought vanishes
+      lifespanSeconds: 20,     // How long before each thought vanishes
       minSpeed: 1.0,           // Minimum launch speed
-      maxSpeed: 1.2,           // Maximum launch speed
+      maxSpeed: 1.0,           // Maximum launch speed
       gravity: 0,              // 0 = zero-g float, positive = sink, negative = rise
       bounciness: 0.5,         // 1.0 = elastic bounce off screen edges
       repulsionStrength: 0.001, // Gentle push between thoughts so they don't overlap
