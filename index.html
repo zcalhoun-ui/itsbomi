@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fleeting Thoughts</title>
   <style>
+  
   @font-face {
   font-family: 'Lora';
-  src: local('Lora'), url('Lora-Regular.ttf') format('truetype');
+  src: local('Lora'), url('Lora-Regular.woff2') format('woff2');
   font-weight: 400 600;
   font-style: normal;
   font-display: swap;
@@ -30,7 +31,7 @@
       background-position: center;
       background-repeat: no-repeat;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Lora', Georgia, serif;
       height: 100vh;
       width: 100vw;
     }
@@ -83,6 +84,7 @@
       background: rgba(24, 27, 34, 0.85);
       border-color: rgba(255, 255, 255, 0.4);
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 0 4px rgba(255, 255, 255, 0.08);
+      font-family: 'Lora', Georgia, serif;
     }
   </style>
 </head>
@@ -106,11 +108,11 @@
     // CUSTOMIZE YOUR PHYSICS & APPEARANCE HERE
     // ==========================================
     const CONFIG = {
-      lifespanSeconds: 20,     // How long before each thought vanishes
+      lifespanSeconds: 10,     // How long before each thought vanishes
       minSpeed: 1.0,           // Minimum launch speed
-      maxSpeed: 2.2,           // Maximum launch speed
+      maxSpeed: 1.2,           // Maximum launch speed
       gravity: 0,              // 0 = zero-g float, positive = sink, negative = rise
-      bounciness: 1.0,         // 1.0 = elastic bounce off screen edges
+      bounciness: 0.5,         // 1.0 = elastic bounce off screen edges
       repulsionStrength: 0.001, // Gentle push between thoughts so they don't overlap
       fontSize: '20px',        // Size of floating text
       fontFamily: 'Lora',
